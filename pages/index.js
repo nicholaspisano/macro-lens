@@ -311,7 +311,7 @@ export default function Dashboard() {
   return (
     <>
       <Head>
-        <title>MacroLens — U.S. Economic Dashboard</title>
+        <title>Clever Macro — U.S. Economic Dashboard</title>
         <meta name="description" content="Live U.S. macroeconomic indicators from FRED" />
         <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>" />
       </Head>
@@ -319,7 +319,7 @@ export default function Dashboard() {
       {/* ── Header ── */}
       <header style={styles.header}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-          <div style={styles.logo}>MACRO<span style={{ color: 'var(--text-tertiary)' }}>/</span>LENS</div>
+          <div style={styles.logo}>CLEVER<span style={{ color: 'var(--text-tertiary)' }}>/</span>MACRO</div>
           <div style={styles.headerDivider} />
           <div style={styles.headerSub}>U.S. Economic Indicators — Federal Reserve Bank of St. Louis</div>
         </div>
@@ -402,7 +402,7 @@ export default function Dashboard() {
           <span style={styles.sectionTitle}>Historical Snapshots (5-Year)</span>
         </div>
         <div style={styles.miniGrid}>
-          {SERIES.slice(0, 4).map(s => (
+          {SERIES.slice(0, 6).map(s => (
             seriesData[s.id]?.length
               ? <MiniChart key={s.id} s={s} data={seriesData[s.id]} />
               : null
@@ -413,7 +413,7 @@ export default function Dashboard() {
       {/* ── Footer ── */}
       <footer style={styles.footer}>
         <div style={styles.footerText}>
-          Data sourced from FRED® API — Federal Reserve Bank of St. Louis.
+          Clever Macro — Data sourced from FRED® API, Federal Reserve Bank of St. Louis.
           Auto-refreshes every 5 minutes. {lastUpdated && `Last refresh: ${lastUpdated.toLocaleString()}`}
         </div>
       </footer>
@@ -459,7 +459,7 @@ const styles = {
   sectionHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
   sectionTitle: { fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-tertiary)' },
   cardsGrid: {
-    display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)',
+    display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)',
     gap: 1, background: 'var(--border)',
     border: '1px solid var(--border)', borderRadius: 6,
     overflow: 'hidden', marginBottom: 24,
