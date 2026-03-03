@@ -67,3 +67,4 @@ In `lib/series.js`, add an entry to the `SERIES` array:
 # macro-lens
 # macro-lens
 # macro-lens
+# macro-lens
