@@ -8,7 +8,6 @@ export default async function handler(req, res) {
   if (!seriesId) return res.status(400).json({ error: 'seriesId required.' });
 
   try {
-    // Fetch observations + series info in parallel
     const [obsRes, infoRes] = await Promise.all([
       fetch(`https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&sort_order=asc&observation_start=1970-01-01`),
       fetch(`https://api.stlouisfed.org/fred/series?series_id=${seriesId}&api_key=${apiKey}&file_type=json`),
@@ -17,7 +16,8 @@ export default async function handler(req, res) {
     if (!obsRes.ok) throw new Error(`FRED observations error ${obsRes.status}`);
     if (!infoRes.ok) throw new Error(`FRED series info error ${infoRes.status}`);
 
-    const [obsData, infoData] = await Promise.all([obsRes.json(), infoRes.json()]);
+    const obsData = await obsRes.json();
+    const infoData = await infoRes.json();
 
     let observations = obsData.observations
       .filter(o => o.value !== '.')
@@ -25,16 +25,22 @@ export default async function handler(req, res) {
 
     if (yoyCalc === 'true') observations = calcYoY(observations);
 
-    // Pull last_updated and the date of the most recent observation
     const seriesInfo = infoData.seriess?.[0] ?? {};
-    const lastUpdated = seriesInfo.last_updated ?? null;       // e.g. "2025-03-05 08:01:03-06"
+
+    // last_updated from FRED looks like "2025-03-05 08:01:03-06"
+    const lastUpdated = seriesInfo.last_updated ?? null;
     const latestObsDate = observations.length
       ? observations[observations.length - 1].date
       : null;
 
-    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=60');
+    // Log for debugging
+    console.log(`[fred] ${seriesId} last_updated=${lastUpdated} latestObs=${latestObsDate}`);
+
+    // No caching so metadata is always fresh
+    res.setHeader('Cache-Control', 'no-store');
     res.status(200).json({ observations, lastUpdated, latestObsDate });
   } catch (err) {
+    console.error(`[fred] error for ${seriesId}:`, err.message);
     res.status(500).json({ error: err.message });
   }
 }

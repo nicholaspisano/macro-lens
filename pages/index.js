@@ -348,9 +348,9 @@ export default function Dashboard() {
       <header style={S.header}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           <div style={S.logo}>
-            <span style={{ color: BLUE }}>CLEVER</span>
-            <span style={{ color: 'var(--text-tertiary)', margin: '0 1px' }}>/</span>
-            <span>MACRO</span>
+            <span style={{ color: 'white' }}>CLEVER</span>
+            <span style={{ color: 'rgba(255,255,255,0.5)', margin: '0 1px' }}>/</span>
+            <span style={{ color: 'white' }}>MACRO</span>
           </div>
           <div style={S.headerDivider} />
           <div style={S.headerSub}>U.S. Economic Indicators — Federal Reserve Bank of St. Louis</div>
@@ -460,18 +460,18 @@ export default function Dashboard() {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const S = {
   header: {
-    background: '#fff', borderBottom: '1px solid var(--border)',
+    background: '#44B2EF', borderBottom: 'none',
     padding: '0 32px', display: 'flex', alignItems: 'center',
     justifyContent: 'space-between', height: 52,
     position: 'sticky', top: 0, zIndex: 100,
   },
   logo: { fontFamily: 'var(--mono)', fontSize: 14, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' },
-  headerDivider: { width: 1, height: 18, background: 'var(--border)' },
-  headerSub: { fontSize: 12, color: 'var(--text-secondary)' },
-  lastUpdated: { fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-tertiary)' },
+  headerDivider: { width: 1, height: 18, background: 'rgba(255,255,255,0.35)' },
+  headerSub: { fontSize: 12, color: 'rgba(255,255,255,0.8)' },
+  lastUpdated: { fontFamily: 'var(--mono)', fontSize: 11, color: 'rgba(255,255,255,0.7)' },
   refreshBtn: {
     display: 'flex', alignItems: 'center', gap: 6,
-    padding: '6px 12px', background: BLUE, color: 'white',
+    padding: '6px 12px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.4)',
     border: 'none', borderRadius: 4, fontFamily: 'var(--sans)',
     fontSize: 12, fontWeight: 500,
   },
