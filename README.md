@@ -65,3 +65,4 @@ In `lib/series.js`, add an entry to the `SERIES` array:
 - Vercel edge caches FRED responses for **5 minutes** to avoid rate limits
 # macro-lens
 # macro-lens
+# macro-lens
