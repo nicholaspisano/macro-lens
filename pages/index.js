@@ -212,14 +212,18 @@ function SectionChart({ s, data, meta, range, onRangeChange }) {
       </div>
       <div style={S.chartFooter}>
         <a
-          href={`https://fred.stlouisfed.org/series/${s.id}`}
+          href={s.source === 'zillow'
+            ? 'https://www.zillow.com/research/data/'
+            : `https://fred.stlouisfed.org/series/${s.id}`}
           target="_blank"
           rel="noopener noreferrer"
           style={{ ...S.chartFooterText, color: BLUE, textDecoration: 'none' }}
           onMouseEnter={e => e.target.style.textDecoration = 'underline'}
           onMouseLeave={e => e.target.style.textDecoration = 'none'}
         >
-          Source: Federal Reserve Bank of St. Louis (FRED) ↗
+          {s.source === 'zillow'
+            ? 'Source: Zillow Research ↗'
+            : 'Source: Federal Reserve Bank of St. Louis (FRED) ↗'}
         </a>
         <span style={S.chartFooterText}>{s.freq} frequency</span>
       </div>
@@ -302,8 +306,14 @@ export default function Dashboard() {
     try {
       const results = await Promise.all(
         SERIES.map(async s => {
-          const params = new URLSearchParams({ seriesId: s.id, yoyCalc: s.yoyCalc ? 'true' : 'false' });
-          const res = await fetch(`/api/fred?${params}`);
+          let url;
+          if (s.source === 'zillow') {
+            url = `/api/zillow?metric=${s.id}`;
+          } else {
+            const params = new URLSearchParams({ seriesId: s.id, yoyCalc: s.yoyCalc ? 'true' : 'false' });
+            url = `/api/fred?${params}`;
+          }
+          const res = await fetch(url);
           if (!res.ok) { const e = await res.json(); throw new Error(e.error || `HTTP ${res.status}`); }
           const { observations, lastUpdated, latestObsDate } = await res.json();
           return [s.id, { observations, lastUpdated, latestObsDate }];
