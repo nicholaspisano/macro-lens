@@ -83,7 +83,13 @@ function MetricCard({ s, data, meta, active, onClick }) {
             onMouseLeave={() => setTipVisible(false)}
             onClick={e => e.stopPropagation()}
           >
-            <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: active ? 'rgba(255,255,255,0.6)' : BLUE, cursor: 'default', userSelect: 'none', fontSize: 13 }}>ⓘ</span>
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              width: 15, height: 15, borderRadius: '50%',
+              background: active ? 'rgba(255,255,255,0.25)' : BLUE,
+              color: 'white', fontSize: 10, fontFamily: 'var(--mono)',
+              fontWeight: 700, cursor: 'default', userSelect: 'none', flexShrink: 0,
+            }}>i</span>
             {tipVisible && (
               <div style={{
                 position: 'absolute', bottom: '130%', right: -8,
