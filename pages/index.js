@@ -346,8 +346,8 @@ export default function Dashboard() {
     setError(null);
     try {
       // Stagger requests in batches of 4 to avoid FRED rate limiting (429)
-      const BATCH_SIZE = 4;
-      const BATCH_DELAY = 500; // ms between batches
+      const BATCH_SIZE = 6;
+      const BATCH_DELAY = 300; // ms between batches
       const allResults = [];
 
       for (let i = 0; i < SERIES.length; i += BATCH_SIZE) {
