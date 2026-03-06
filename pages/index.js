@@ -176,7 +176,7 @@ function SectionChart({ s, data, meta, range, onRangeChange }) {
           <div style={S.chartTitle}>{s.title}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 4, flexWrap: 'wrap' }}>
             <span style={S.chartSubtitle}>{s.subtitle}</span>
-            <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: BLUE }}>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 13, color: BLUE }}>
               Measures {dateLabel(latestObs.date)}
               {released && ` · Released ${released}`}
             </span>
@@ -423,15 +423,15 @@ const S = {
     justifyContent: 'space-between', height: 52,
     position: 'sticky', top: 0, zIndex: 100,
   },
-  logo: { fontFamily: 'var(--mono)', fontSize: 14, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' },
+  logo: { fontFamily: 'var(--mono)', fontSize: 16, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' },
   headerDivider: { width: 1, height: 18, background: 'rgba(255,255,255,0.35)' },
-  headerSub: { fontSize: 12, color: 'rgba(255,255,255,0.8)' },
-  lastUpdated: { fontFamily: 'var(--mono)', fontSize: 11, color: 'rgba(255,255,255,0.65)' },
+  headerSub: { fontSize: 14, color: 'rgba(255,255,255,0.8)' },
+  lastUpdated: { fontFamily: 'var(--mono)', fontSize: 13, color: 'rgba(255,255,255,0.65)' },
   refreshBtn: {
     display: 'flex', alignItems: 'center', gap: 6,
     padding: '6px 12px', background: 'rgba(255,255,255,0.2)', color: 'white',
     border: '1px solid rgba(255,255,255,0.4)', borderRadius: 4,
-    fontFamily: 'var(--sans)', fontSize: 12, fontWeight: 500,
+    fontFamily: 'var(--sans)', fontSize: 14, fontWeight: 500,
   },
   statusBar: {
     background: '#fff', borderBottom: '1px solid var(--border-light)',
@@ -439,15 +439,15 @@ const S = {
     alignItems: 'center', overflowX: 'auto',
   },
   statusSep: { width: 1, height: 14, background: 'var(--border-light)', marginRight: 16 },
-  statusLabel: { fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em' },
-  statusValue: { fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 500, color: 'var(--text-primary)' },
+  statusLabel: { fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em' },
+  statusValue: { fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' },
   main: { padding: '24px 32px', maxWidth: 1400, margin: '0 auto' },
   errorBox: {
     background: '#fdf3f2', border: '1px solid #f5c6c3', borderRadius: 4,
     padding: '10px 14px', fontSize: 12, color: 'var(--negative)', marginBottom: 16,
   },
   sectionHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
-  sectionTitle: { fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: BLUE },
+  sectionTitle: { fontSize: 15, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: BLUE },
   cardsGrid: {
     display: 'grid',
     gap: 1, background: 'var(--border)',
@@ -455,30 +455,30 @@ const S = {
     overflow: 'hidden',
   },
   card: { background: '#fff', padding: '16px 18px', transition: 'background 0.15s', borderBottom: '2px solid transparent' },
-  cardLabel: { fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text-tertiary)', marginBottom: 8 },
-  cardValue: { fontFamily: 'var(--mono)', fontSize: 20, fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1 },
+  cardLabel: { fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text-tertiary)', marginBottom: 8 },
+  cardValue: { fontFamily: 'var(--mono)', fontSize: 24, fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1 },
   metaRow: { display: 'flex', alignItems: 'baseline', gap: 5 },
-  metaKey: { fontFamily: 'var(--mono)', fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-tertiary)', flexShrink: 0 },
-  metaVal: { fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-secondary)' },
-  cardSource: { fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', marginTop: 8, textTransform: 'uppercase', letterSpacing: '0.04em' },
+  metaKey: { fontFamily: 'var(--mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-tertiary)', flexShrink: 0 },
+  metaVal: { fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text-secondary)' },
+  cardSource: { fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-tertiary)', marginTop: 8, textTransform: 'uppercase', letterSpacing: '0.04em' },
   skeleton: { background: 'var(--border-light)', borderRadius: 3, color: 'transparent', animation: 'pulse 1.4s ease-in-out infinite' },
-  badge: { fontFamily: 'var(--mono)', fontSize: 10, padding: '1px 5px', borderRadius: 2, display: 'inline-block' },
+  badge: { fontFamily: 'var(--mono)', fontSize: 12, padding: '1px 5px', borderRadius: 2, display: 'inline-block' },
   chartPanel: { background: '#fff' },
   chartHeader: {
     padding: '16px 20px', borderBottom: '1px solid var(--border-light)',
     display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16,
   },
-  chartTitle: { fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' },
-  chartSubtitle: { fontSize: 11, color: 'var(--text-secondary)' },
-  statLabel: { fontSize: 10, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 },
-  statValue: { fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' },
+  chartTitle: { fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' },
+  chartSubtitle: { fontSize: 13, color: 'var(--text-secondary)' },
+  statLabel: { fontSize: 12, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 },
+  statValue: { fontFamily: 'var(--mono)', fontSize: 15, fontWeight: 500, color: 'var(--text-primary)' },
   rangeTab: {
-    fontFamily: 'var(--mono)', fontSize: 11, padding: '3px 8px',
+    fontFamily: 'var(--mono)', fontSize: 13, padding: '3px 8px',
     border: '1px solid var(--border)', background: 'transparent',
     color: 'var(--text-secondary)', borderRadius: 3,
   },
   rangeTabActive: {
-    fontFamily: 'var(--mono)', fontSize: 11, padding: '3px 8px',
+    fontFamily: 'var(--mono)', fontSize: 13, padding: '3px 8px',
     border: `1px solid ${BLUE}`, background: BLUE,
     color: 'white', borderRadius: 3,
   },
@@ -486,7 +486,7 @@ const S = {
     padding: '10px 20px', borderTop: '1px solid var(--border-light)',
     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
   },
-  chartFooterText: { fontSize: 10, color: 'var(--text-tertiary)' },
+  chartFooterText: { fontSize: 12, color: 'var(--text-tertiary)' },
   footer: { padding: '0 32px 24px', maxWidth: 1400, margin: '0 auto' },
-  footerText: { fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)' },
+  footerText: { fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text-tertiary)' },
 };
