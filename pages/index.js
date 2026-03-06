@@ -320,21 +320,34 @@ export default function Dashboard() {
     setLoading(true);
     setError(null);
     try {
-      const results = await Promise.all(
-        SERIES.map(async s => {
-          let url;
-          if (s.source === 'zillow') {
-            url = `/api/zillow?metric=${s.id}`;
-          } else {
-            const params = new URLSearchParams({ seriesId: s.id, yoyCalc: s.yoyCalc ? 'true' : 'false' });
-            url = `/api/fred?${params}`;
-          }
-          const res = await fetch(url);
-          if (!res.ok) { const e = await res.json(); throw new Error(e.error || `HTTP ${res.status}`); }
-          const { observations, lastUpdated, latestObsDate } = await res.json();
-          return [s.id, { observations, lastUpdated, latestObsDate }];
-        })
-      );
+      // Stagger requests in batches of 4 to avoid FRED rate limiting (429)
+      const BATCH_SIZE = 4;
+      const BATCH_DELAY = 500; // ms between batches
+      const allResults = [];
+
+      for (let i = 0; i < SERIES.length; i += BATCH_SIZE) {
+        const batch = SERIES.slice(i, i + BATCH_SIZE);
+        const batchResults = await Promise.all(
+          batch.map(async s => {
+            let url;
+            if (s.source === 'zillow') {
+              url = `/api/zillow?metric=${s.id}`;
+            } else {
+              const params = new URLSearchParams({ seriesId: s.id, yoyCalc: s.yoyCalc ? 'true' : 'false' });
+              url = `/api/fred?${params}`;
+            }
+            const res = await fetch(url);
+            if (!res.ok) { const e = await res.json(); throw new Error(e.error || `HTTP ${res.status}`); }
+            const { observations, lastUpdated, latestObsDate } = await res.json();
+            return [s.id, { observations, lastUpdated, latestObsDate }];
+          })
+        );
+        allResults.push(...batchResults);
+        if (i + BATCH_SIZE < SERIES.length) {
+          await new Promise(r => setTimeout(r, BATCH_DELAY));
+        }
+      }
+      const results = allResults;
       const dataMap = {}, metaMap = {};
       results.forEach(([id, { observations, lastUpdated, latestObsDate }]) => {
         dataMap[id] = observations;
