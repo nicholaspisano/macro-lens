@@ -81,7 +81,7 @@ function MetricCard({ s, data, meta, active, onClick }) {
       <div>
         <div style={{ ...S.metaRow, marginBottom: 3 }}>
           <span style={{ ...S.metaKey, color: dim }}>Measures</span>
-          <span style={{ ...S.metaVal, color: bright }}>{dateLabel(latest.date)}</span>
+          <span style={{ ...S.metaVal, color: bright }}>{dateLabel(latest.date, s.dateFormat)}</span>
         </div>
         <div style={S.metaRow}>
           <span style={{ ...S.metaKey, color: dim }}>Released</span>
