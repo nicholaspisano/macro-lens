@@ -245,7 +245,7 @@ function CardSection({ group, series, seriesData, seriesMeta }) {
     <div style={{ marginBottom: 28 }}>
       <div style={S.sectionHeader}>
         <span style={S.sectionTitle}>{group.label}</span>
-        <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
+        <span style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>
           {activeId ? 'Click selected card to collapse' : 'Click a card to explore'}
         </span>
       </div>
@@ -339,7 +339,7 @@ export default function Dashboard() {
             <span style={{ color: 'white' }}>MACRO</span>
           </div>
           <div style={S.headerDivider} />
-          <div style={S.headerSub}>U.S. Economic, Real Estate, and Personal Finance Data Dashboard</div>
+          <div style={S.headerSub}>Economic, Real Estate, and Personal Finance Data Dashboard</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           {lastRefresh && (
@@ -356,26 +356,6 @@ export default function Dashboard() {
           </button>
         </div>
       </header>
-
-      {/* ── Status bar ── */}
-      <div style={S.statusBar}>
-        {SERIES.map((s, i) => {
-          const d = seriesData[s.id];
-          if (!d?.length) return null;
-          const latest = d[d.length - 1];
-          const prev   = d[d.length - 2];
-          const chg    = prev ? latest.value - prev.value : null;
-          const { text, cls } = formatChange(chg, s.format);
-          const isPos = cls === 'pos', isNeg = cls === 'neg';
-          const badgeStyle = { ...S.badge, color: isPos ? '#2a7d4f' : isNeg ? '#c0392b' : 'var(--text-tertiary)', background: isPos ? '#f0faf5' : isNeg ? '#fdf3f2' : 'transparent' };
-          return (
-            <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
-              {i > 0 && <div style={S.statusSep} />}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={S.statusLabel}>{s.label}</span>
-                <span style={S.statusValue}>{formatValue(latest.value, s.format)}</span>
-                <span style={badgeStyle}>{text}</span>
-              </div>
             </div>
           );
         })}
