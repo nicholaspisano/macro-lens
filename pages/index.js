@@ -262,18 +262,34 @@ function CardSection({ group, series, seriesData, seriesMeta }) {
         </span>
       </div>
 
-      {/* Cards */}
-      <div style={{ ...S.cardsGrid, gridTemplateColumns: `repeat(${cols}, 1fr)`, marginBottom: activeId ? 0 : 0, borderRadius: activeId ? '6px 6px 0 0' : 6 }}>
-        {series.map(s => (
-          <MetricCard
-            key={s.id} s={s}
-            data={seriesData[s.id]}
-            meta={seriesMeta[s.id]}
-            active={activeId === s.id}
-            onClick={() => handleSelect(s.id)}
-          />
-        ))}
-      </div>
+      {/* Cards — support multi-row layout via s.row property */}
+      {(() => {
+        const hasRows = series.some(s => s.row);
+        if (!hasRows) {
+          return (
+            <div style={{ ...S.cardsGrid, gridTemplateColumns: `repeat(${cols}, 1fr)`, borderRadius: activeId ? '6px 6px 0 0' : 6 }}>
+              {series.map(s => (
+                <MetricCard key={s.id} s={s} data={seriesData[s.id]} meta={seriesMeta[s.id]} active={activeId === s.id} onClick={() => handleSelect(s.id)} />
+              ))}
+            </div>
+          );
+        }
+        const rowNums = [...new Set(series.map(s => s.row || 1))].sort();
+        return (
+          <div style={{ borderRadius: activeId ? '6px 6px 0 0' : 6, overflow: 'hidden', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 1, background: 'var(--border)' }}>
+            {rowNums.map(rowNum => {
+              const rowSeries = series.filter(s => (s.row || 1) === rowNum);
+              return (
+                <div key={rowNum} style={{ display: 'grid', gridTemplateColumns: `repeat(${rowSeries.length}, 1fr)`, gap: 1, background: 'var(--border)' }}>
+                  {rowSeries.map(s => (
+                    <MetricCard key={s.id} s={s} data={seriesData[s.id]} meta={seriesMeta[s.id]} active={activeId === s.id} onClick={() => handleSelect(s.id)} />
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+        );
+      })()}
 
       {/* Inline chart — only shown when a card is selected */}
       {activeId && (
