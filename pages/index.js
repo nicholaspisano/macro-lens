@@ -15,7 +15,12 @@ const BLUE = '#44B2EF';
 
 function fmtReleaseDate(str) {
   if (!str) return null;
-  const d = new Date(str.replace(' ', 'T'));
+  // FRED returns "2026-02-13 08:05:50-06" — fix space and short tz offset
+  const normalized = str
+    .replace(' ', 'T')
+    .replace(/-(\d{2})$/, '-$1:00')  // -06 -> -06:00
+    .replace(/\+(\d{2})$/, '+$1:00'); // +06 -> +06:00
+  const d = new Date(normalized);
   if (isNaN(d)) return null;
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
