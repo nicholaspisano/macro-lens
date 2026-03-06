@@ -152,6 +152,13 @@ function SectionChart({ s, data, meta, range, onRangeChange }) {
       },
       y: {
         grid: { color: '#ebebea' }, border: { display: false },
+        title: {
+          display: true,
+          text: s.unit,
+          font: { family: "'IBM Plex Mono'", size: 9 },
+          color: '#a0a09d',
+          padding: { bottom: 4 },
+        },
         ticks: {
           font: { family: "'IBM Plex Mono'", size: 10 }, color: '#a0a09d',
           maxTicksLimit: 6, callback: v => formatValue(v, s.format)
@@ -160,7 +167,7 @@ function SectionChart({ s, data, meta, range, onRangeChange }) {
     }
   };
 
-  const ranges = ['1Y', '5Y', '10Y', 'MAX'];
+  const ranges = ['3M', '1Y', '5Y', '10Y', 'MAX'];
 
   return (
     <div style={S.chartPanel}>
