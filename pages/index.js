@@ -356,10 +356,6 @@ export default function Dashboard() {
           </button>
         </div>
       </header>
-            </div>
-          );
-        })}
-      </div>
 
       {/* ── Main ── */}
       <main style={S.main}>
