@@ -330,7 +330,7 @@ export default function Dashboard() {
             <span style={{ color: 'white' }}>MACRO</span>
           </div>
           <div style={S.headerDivider} />
-          <div style={S.headerSub}>U.S. Economic Indicators — Federal Reserve Bank of St. Louis</div>
+          <div style={S.headerSub}>U.S. Economic, Real Estate, and Personal Finance Data Dashboard</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           {lastRefresh && (
@@ -438,7 +438,7 @@ const S = {
     padding: '10px 14px', fontSize: 12, color: 'var(--negative)', marginBottom: 16,
   },
   sectionHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
-  sectionTitle: { fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: BLUE },
+  sectionTitle: { fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: BLUE },
   cardsGrid: {
     display: 'grid',
     gap: 1, background: 'var(--border)',
