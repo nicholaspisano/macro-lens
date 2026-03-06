@@ -69,11 +69,36 @@ function MetricCard({ s, data, meta, active, onClick }) {
   const bright = active ? 'rgba(255,255,255,0.75)' : 'var(--text-secondary)';
 
   const [hovered, setHovered] = useState(false);
+  const [tipVisible, setTipVisible] = useState(false);
   const hoverStyle = (!active && hovered) ? { ...cardStyle, background: '#f5fbff' } : cardStyle;
 
   return (
     <div style={hoverStyle} onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
-      <div style={{ ...S.cardLabel, color: active ? 'rgba(68,178,239,0.7)' : undefined }}>{s.label}</div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+        <div style={{ ...S.cardLabel, marginBottom: 0, color: active ? 'rgba(68,178,239,0.7)' : undefined }}>{s.label}</div>
+        {s.description && (
+          <div style={{ position: 'relative', flexShrink: 0, marginLeft: 6 }}
+            onMouseEnter={e => { e.stopPropagation(); setTipVisible(true); }}
+            onMouseLeave={() => setTipVisible(false)}
+            onClick={e => e.stopPropagation()}
+          >
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: active ? 'rgba(255,255,255,0.4)' : 'var(--text-tertiary)', cursor: 'default', userSelect: 'none' }}>ⓘ</span>
+            {tipVisible && (
+              <div style={{
+                position: 'absolute', bottom: '120%', right: 0,
+                background: '#0f1c26', color: 'rgba(255,255,255,0.88)',
+                fontSize: 12, lineHeight: 1.5, padding: '10px 12px',
+                borderRadius: 5, width: 260, zIndex: 999,
+                boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
+                pointerEvents: 'none',
+              }}>
+                {s.description}
+                <div style={{ position: 'absolute', bottom: -5, right: 8, width: 10, height: 10, background: '#0f1c26', transform: 'rotate(45deg)' }} />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
       <div style={{ ...S.cardValue, color: active ? '#fff' : undefined }}>
         {formatValue(latest.value, s.format)}
       </div>
