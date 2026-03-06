@@ -48,6 +48,9 @@ function SkeletonCard({ s }) {
 
 // ─── Metric card ──────────────────────────────────────────────────────────────
 function MetricCard({ s, data, meta, active, onClick }) {
+  const [hovered, setHovered] = useState(false);
+  const [tipVisible, setTipVisible] = useState(false);
+
   if (!data || !data.length) return <SkeletonCard s={s} />;
 
   const latest = data[data.length - 1];
@@ -68,8 +71,6 @@ function MetricCard({ s, data, meta, active, onClick }) {
   const dim    = active ? 'rgba(255,255,255,0.35)' : 'var(--text-tertiary)';
   const bright = active ? 'rgba(255,255,255,0.75)' : 'var(--text-secondary)';
 
-  const [hovered, setHovered] = useState(false);
-  const [tipVisible, setTipVisible] = useState(false);
   const hoverStyle = (!active && hovered) ? { ...cardStyle, background: '#f5fbff' } : cardStyle;
 
   return (
@@ -82,18 +83,17 @@ function MetricCard({ s, data, meta, active, onClick }) {
             onMouseLeave={() => setTipVisible(false)}
             onClick={e => e.stopPropagation()}
           >
-            <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: active ? 'rgba(255,255,255,0.4)' : 'var(--text-tertiary)', cursor: 'default', userSelect: 'none' }}>ⓘ</span>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: active ? 'rgba(255,255,255,0.6)' : BLUE, cursor: 'default', userSelect: 'none', fontSize: 13 }}>ⓘ</span>
             {tipVisible && (
               <div style={{
-                position: 'absolute', bottom: '120%', right: 0,
+                position: 'absolute', bottom: '130%', right: -8,
                 background: '#0f1c26', color: 'rgba(255,255,255,0.88)',
                 fontSize: 12, lineHeight: 1.5, padding: '10px 12px',
-                borderRadius: 5, width: 260, zIndex: 999,
-                boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
+                borderRadius: 5, width: 260, zIndex: 9999,
+                boxShadow: '0 4px 16px rgba(0,0,0,0.25)',
                 pointerEvents: 'none',
               }}>
                 {s.description}
-                <div style={{ position: 'absolute', bottom: -5, right: 8, width: 10, height: 10, background: '#0f1c26', transform: 'rotate(45deg)' }} />
               </div>
             )}
           </div>
@@ -301,7 +301,7 @@ function CardSection({ group, series, seriesData, seriesMeta }) {
         }
         const rowNums = [...new Set(series.map(s => s.row || 1))].sort();
         return (
-          <div style={{ borderRadius: activeId ? '6px 6px 0 0' : 6, overflow: 'hidden', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 1, background: 'var(--border)' }}>
+          <div style={{ borderRadius: activeId ? '6px 6px 0 0' : 6, overflow: 'visible', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 1, background: 'var(--border)' }}>
             {rowNums.map(rowNum => {
               const rowSeries = series.filter(s => (s.row || 1) === rowNum);
               return (
@@ -495,7 +495,7 @@ const S = {
     display: 'grid',
     gap: 1, background: 'var(--border)',
     border: '1px solid var(--border)',
-    overflow: 'hidden',
+    overflow: 'visible',
   },
   card: { background: '#fff', padding: '16px 18px', transition: 'background 0.15s', borderBottom: '2px solid transparent' },
   cardLabel: { fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text-tertiary)', marginBottom: 8 },
