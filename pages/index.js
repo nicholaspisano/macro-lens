@@ -63,8 +63,11 @@ function MetricCard({ s, data, meta, active, onClick }) {
   const dim    = active ? 'rgba(255,255,255,0.35)' : 'var(--text-tertiary)';
   const bright = active ? 'rgba(255,255,255,0.75)' : 'var(--text-secondary)';
 
+  const [hovered, setHovered] = useState(false);
+  const hoverStyle = (!active && hovered) ? { ...cardStyle, background: '#f5fbff' } : cardStyle;
+
   return (
-    <div style={cardStyle} onClick={onClick}>
+    <div style={hoverStyle} onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
       <div style={{ ...S.cardLabel, color: active ? 'rgba(68,178,239,0.7)' : undefined }}>{s.label}</div>
       <div style={{ ...S.cardValue, color: active ? '#fff' : undefined }}>
         {formatValue(latest.value, s.format)}
@@ -245,7 +248,7 @@ function CardSection({ group, series, seriesData, seriesMeta }) {
     <div style={{ marginBottom: 28 }}>
       <div style={S.sectionHeader}>
         <span style={S.sectionTitle}>{group.label}</span>
-        <span style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>
+        <span style={{ fontSize: 14, color: 'var(--text-tertiary)', fontWeight: 600 }}>
           {activeId ? 'Click selected card to collapse' : 'Click a card to explore'}
         </span>
       </div>
@@ -342,11 +345,6 @@ export default function Dashboard() {
           <div style={S.headerSub}>Economic, Real Estate, and Personal Finance Data Dashboard</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          {lastRefresh && (
-            <span style={S.lastUpdated}>
-              Refreshed {lastRefresh.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-            </span>
-          )}
           <button style={loading ? { ...S.refreshBtn, opacity: 0.5 } : S.refreshBtn} onClick={loadAll} disabled={loading}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
               style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }}>
@@ -379,7 +377,7 @@ export default function Dashboard() {
       <footer style={S.footer}>
         <div style={S.footerText}>
           Clever Macro · Data from FRED® API, Federal Reserve Bank of St. Louis · Auto-refreshes every 5 min
-          {lastRefresh && ` · Last refresh ${lastRefresh.toLocaleString()}`}
+          {lastRefresh && ` · Last refreshed ${lastRefresh.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`}
         </div>
       </footer>
 
