@@ -203,7 +203,16 @@ function SectionChart({ s, data, meta, range, onRangeChange }) {
         <Line data={chartData} options={opts} />
       </div>
       <div style={S.chartFooter}>
-        <span style={S.chartFooterText}>Source: Federal Reserve Bank of St. Louis (FRED)</span>
+        <a
+          href={`https://fred.stlouisfed.org/series/${s.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ ...S.chartFooterText, color: BLUE, textDecoration: 'none' }}
+          onMouseEnter={e => e.target.style.textDecoration = 'underline'}
+          onMouseLeave={e => e.target.style.textDecoration = 'none'}
+        >
+          Source: Federal Reserve Bank of St. Louis (FRED) ↗
+        </a>
         <span style={S.chartFooterText}>{s.freq} frequency</span>
       </div>
     </div>
