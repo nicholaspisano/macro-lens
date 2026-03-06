@@ -55,7 +55,7 @@ function MetricCard({ s, data, meta, active, onClick }) {
   const chg    = prev ? latest.value - prev.value : null;
   const { text, cls } = formatChange(chg, s.format);
   const isPos = cls === 'pos', isNeg = cls === 'neg';
-  const released = fmtReleaseDate(meta?.lastUpdated);
+  const released = fmtReleaseDate(s.source === 'zillow' ? meta?.latestObsDate : meta?.lastUpdated);
 
   const cardStyle = active
     ? { ...S.card, background: '#0f1c26', borderBottom: `2px solid ${BLUE}`, cursor: 'pointer' }
@@ -88,7 +88,7 @@ function MetricCard({ s, data, meta, active, onClick }) {
           <span style={{ ...S.metaVal, color: bright }}>{released ?? '—'}</span>
         </div>
       </div>
-      <div style={{ ...S.cardSource, color: active ? 'rgba(255,255,255,0.2)' : undefined }}>FRED · {s.freq}</div>
+      <div style={{ ...S.cardSource, color: active ? 'rgba(255,255,255,0.2)' : undefined }}>{s.source === 'zillow' ? 'Zillow' : 'FRED'} · {s.freq}</div>
     </div>
   );
 }
