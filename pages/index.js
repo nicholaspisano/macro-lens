@@ -50,7 +50,6 @@ function MetricCard({ s, data, meta, active, onClick }) {
   const chg    = prev ? latest.value - prev.value : null;
   const { text, cls } = formatChange(chg, s.format);
   const isPos = cls === 'pos', isNeg = cls === 'neg';
-
   const released = fmtReleaseDate(meta?.lastUpdated);
 
   const cardStyle = active
@@ -86,26 +85,16 @@ function MetricCard({ s, data, meta, active, onClick }) {
   );
 }
 
-// ─── Main chart ───────────────────────────────────────────────────────────────
-function MainChart({ s, data, meta, range, onRangeChange }) {
-  if (!s || !data) {
-    return (
-      <div style={S.chartPanel}>
-        <div style={S.chartPlaceholder}>
-          <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-tertiary)', letterSpacing: '0.08em' }}>
-            SELECT AN INDICATOR ABOVE TO VIEW CHART
-          </span>
-        </div>
-      </div>
-    );
-  }
+// ─── Section chart ────────────────────────────────────────────────────────────
+function SectionChart({ s, data, meta, range, onRangeChange }) {
+  if (!s || !data) return null;
 
   const filtered = filterRange(data, range);
-  const vals   = filtered.map(d => d.value);
-  const latest = vals[vals.length - 1];
-  const min    = Math.min(...vals);
-  const max    = Math.max(...vals);
-  const avg    = vals.reduce((a, b) => a + b, 0) / vals.length;
+  const vals     = filtered.map(d => d.value);
+  const latest   = vals[vals.length - 1];
+  const min      = Math.min(...vals);
+  const max      = Math.max(...vals);
+  const avg      = vals.reduce((a, b) => a + b, 0) / vals.length;
   const latestObs = data[data.length - 1];
   const released  = fmtReleaseDate(meta?.lastUpdated);
 
@@ -203,7 +192,7 @@ function MainChart({ s, data, meta, range, onRangeChange }) {
           </div>
         </div>
       </div>
-      <div style={{ height: 300, padding: '16px 20px 12px' }}>
+      <div style={{ height: 260, padding: '16px 20px 12px' }}>
         <Line data={chartData} options={opts} />
       </div>
       <div style={S.chartFooter}>
@@ -214,26 +203,62 @@ function MainChart({ s, data, meta, range, onRangeChange }) {
   );
 }
 
-// ─── Section of cards ─────────────────────────────────────────────────────────
-function CardSection({ group, series, seriesData, seriesMeta, activeId, onSelect }) {
-  const cols = series.length <= 3 ? series.length : series.length <= 4 ? 4 : series.length;
+// ─── Card section with its own chart ─────────────────────────────────────────
+function CardSection({ group, series, seriesData, seriesMeta }) {
+  const [activeId, setActiveId] = useState(null);
+  const [range, setRange]       = useState('5Y');
+  const chartRef                = useRef(null);
+
+  const activeSeries = series.find(s => s.id === activeId);
+  const activeData   = activeId ? seriesData[activeId] : null;
+  const activeMeta   = activeId ? seriesMeta[activeId] : null;
+
+  const handleSelect = (id) => {
+    if (activeId === id) {
+      setActiveId(null); // toggle off
+    } else {
+      setActiveId(id);
+      // Scroll chart into view smoothly after render
+      setTimeout(() => chartRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+    }
+  };
+
+  const cols = series.length;
+
   return (
-    <div style={{ marginBottom: 24 }}>
+    <div style={{ marginBottom: 28 }}>
       <div style={S.sectionHeader}>
         <span style={S.sectionTitle}>{group.label}</span>
-        <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Click a card to explore</span>
+        <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
+          {activeId ? 'Click selected card to collapse' : 'Click a card to explore'}
+        </span>
       </div>
-      <div style={{ ...S.cardsGrid, gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+
+      {/* Cards */}
+      <div style={{ ...S.cardsGrid, gridTemplateColumns: `repeat(${cols}, 1fr)`, marginBottom: activeId ? 0 : 0, borderRadius: activeId ? '6px 6px 0 0' : 6 }}>
         {series.map(s => (
           <MetricCard
             key={s.id} s={s}
             data={seriesData[s.id]}
             meta={seriesMeta[s.id]}
             active={activeId === s.id}
-            onClick={() => onSelect(s.id)}
+            onClick={() => handleSelect(s.id)}
           />
         ))}
       </div>
+
+      {/* Inline chart — only shown when a card is selected */}
+      {activeId && (
+        <div ref={chartRef} style={{ border: '1px solid var(--border)', borderTop: 'none', borderRadius: '0 0 6px 6px', overflow: 'hidden' }}>
+          <SectionChart
+            s={activeSeries}
+            data={activeData}
+            meta={activeMeta}
+            range={range}
+            onRangeChange={setRange}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -242,8 +267,6 @@ function CardSection({ group, series, seriesData, seriesMeta, activeId, onSelect
 export default function Dashboard() {
   const [seriesData, setSeriesData]   = useState({});
   const [seriesMeta, setSeriesMeta]   = useState({});
-  const [activeId, setActiveId]       = useState(null);
-  const [range, setRange]             = useState('5Y');
   const [loading, setLoading]         = useState(false);
   const [error, setError]             = useState(null);
   const [lastRefresh, setLastRefresh] = useState(null);
@@ -282,10 +305,6 @@ export default function Dashboard() {
     timerRef.current = setInterval(loadAll, REFRESH_MS);
     return () => clearInterval(timerRef.current);
   }, [loadAll]);
-
-  const activeSeries = SERIES.find(s => s.id === activeId);
-  const activeData   = activeId ? seriesData[activeId] : null;
-  const activeMeta   = activeId ? seriesMeta[activeId] : null;
 
   return (
     <>
@@ -338,9 +357,7 @@ export default function Dashboard() {
               {i > 0 && <div style={S.statusSep} />}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={S.statusLabel}>{s.label}</span>
-                <span style={{ ...S.statusValue, color: activeId === s.id ? BLUE : undefined }}>
-                  {formatValue(latest.value, s.format)}
-                </span>
+                <span style={S.statusValue}>{formatValue(latest.value, s.format)}</span>
                 <span style={badgeStyle}>{text}</span>
               </div>
             </div>
@@ -352,7 +369,6 @@ export default function Dashboard() {
       <main style={S.main}>
         {error && <div style={S.errorBox}>⚠ {error}</div>}
 
-        {/* Grouped card sections */}
         {GROUPS.map(group => {
           const groupSeries = SERIES.filter(s => s.group === group.key);
           if (!groupSeries.length) return null;
@@ -363,17 +379,9 @@ export default function Dashboard() {
               series={groupSeries}
               seriesData={seriesData}
               seriesMeta={seriesMeta}
-              activeId={activeId}
-              onSelect={setActiveId}
             />
           );
         })}
-
-        {/* Main chart */}
-        <MainChart
-          s={activeSeries} data={activeData} meta={activeMeta}
-          range={range} onRangeChange={setRange}
-        />
       </main>
 
       <footer style={S.footer}>
@@ -427,8 +435,8 @@ const S = {
   cardsGrid: {
     display: 'grid',
     gap: 1, background: 'var(--border)',
-    border: '1px solid var(--border)', borderRadius: 6,
-    overflow: 'hidden', marginBottom: 0,
+    border: '1px solid var(--border)',
+    overflow: 'hidden',
   },
   card: { background: '#fff', padding: '16px 18px', transition: 'background 0.15s', borderBottom: '2px solid transparent' },
   cardLabel: { fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text-tertiary)', marginBottom: 8 },
@@ -439,11 +447,7 @@ const S = {
   cardSource: { fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', marginTop: 8, textTransform: 'uppercase', letterSpacing: '0.04em' },
   skeleton: { background: 'var(--border-light)', borderRadius: 3, color: 'transparent', animation: 'pulse 1.4s ease-in-out infinite' },
   badge: { fontFamily: 'var(--mono)', fontSize: 10, padding: '1px 5px', borderRadius: 2, display: 'inline-block' },
-  chartPanel: {
-    background: '#fff', border: '1px solid var(--border)',
-    borderRadius: 6, overflow: 'hidden', marginBottom: 24,
-  },
-  chartPlaceholder: { height: 360, display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  chartPanel: { background: '#fff' },
   chartHeader: {
     padding: '16px 20px', borderBottom: '1px solid var(--border-light)',
     display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16,
