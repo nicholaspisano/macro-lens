@@ -63,6 +63,16 @@ function MetricCard({ s, data, meta, active, onClick }) {
   const isPos = cls === 'pos', isNeg = cls === 'neg';
   const released = fmtReleaseDate(s.source === 'zillow' ? meta?.latestObsDate : meta?.lastUpdated);
 
+  const isRecent = (() => {
+    const dateStr = meta?.lastUpdated || meta?.latestObsDate;
+    if (!dateStr) return false;
+    const updated = new Date(dateStr.replace(' ', 'T').replace(/([+-]\d{2})$/, '$1:00'));
+    if (isNaN(updated)) return false;
+    const hoursSince = (Date.now() - updated.getTime()) / (1000 * 60 * 60);
+    const threshold = (s.freq === 'Weekly' || s.freq === 'Daily') ? 24 : 72;
+    return hoursSince <= threshold;
+  })();
+
   const cardStyle = active
     ? { ...S.card, background: '#0f1c26', borderBottom: `2px solid ${BLUE}`, cursor: 'pointer' }
     : { ...S.card, cursor: 'pointer', borderBottom: '2px solid transparent' };
@@ -79,7 +89,18 @@ function MetricCard({ s, data, meta, active, onClick }) {
   return (
     <div style={hoverStyle} onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-        <div style={{ ...S.cardLabel, marginBottom: 0, color: active ? 'rgba(68,178,239,0.7)' : undefined }}>{s.label}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ ...S.cardLabel, marginBottom: 0, color: active ? 'rgba(68,178,239,0.7)' : undefined }}>{s.label}</div>
+          {isRecent && (
+            <span style={{
+              fontSize: 9, fontFamily: 'var(--mono)', fontWeight: 700,
+              letterSpacing: '0.05em', textTransform: 'uppercase',
+              background: active ? 'rgba(110,233,168,0.2)' : '#edfaf3',
+              color: active ? '#6ee9a8' : '#2a7d4f',
+              padding: '1px 5px', borderRadius: 3,
+            }}>New</span>
+          )}
+        </div>
         {s.description && (
           <div style={{ position: 'relative', flexShrink: 0, marginLeft: 6 }}
             onMouseEnter={e => { e.stopPropagation(); setTipVisible(true); }}
