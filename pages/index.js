@@ -69,7 +69,7 @@ function MetricCard({ s, data, meta, active, onClick }) {
     const updated = new Date(dateStr.replace(' ', 'T').replace(/([+-]\d{2})$/, '$1:00'));
     if (isNaN(updated)) return false;
     const hoursSince = (Date.now() - updated.getTime()) / (1000 * 60 * 60);
-    const threshold = (s.freq === 'Weekly' || s.freq === 'Daily') ? 24 : 72;
+    const threshold = (s.freq === 'Daily' || s.freq === 'Weekly') ? 24 : 72;
     return hoursSince <= threshold;
   })();
 
@@ -143,7 +143,7 @@ function MetricCard({ s, data, meta, active, onClick }) {
           <span style={{ ...S.metaVal, color: bright }}>{released ?? '—'}</span>
         </div>
       </div>
-      <div style={{ ...S.cardSource, color: active ? 'rgba(255,255,255,0.2)' : undefined }}>{s.source === 'zillow' ? 'Zillow' : 'FRED'} · {s.freq}</div>
+      <div style={{ ...S.cardSource, color: active ? 'rgba(255,255,255,0.2)' : undefined }}>{s.source === 'zillow' ? 'Zillow' : s.source === 'yahoo' ? 'Yahoo Finance' : 'FRED'} · {s.freq}</div>
     </div>
   );
 }
@@ -269,6 +269,8 @@ function SectionChart({ s, data, meta, range, onRangeChange }) {
         <a
           href={s.source === 'zillow'
             ? 'https://www.zillow.com/research/data/'
+            : s.source === 'yahoo'
+            ? 'https://finance.yahoo.com'
             : `https://fred.stlouisfed.org/series/${s.id}`}
           target="_blank"
           rel="noopener noreferrer"
@@ -278,6 +280,8 @@ function SectionChart({ s, data, meta, range, onRangeChange }) {
         >
           {s.source === 'zillow'
             ? 'Source: Zillow Research ↗'
+            : s.source === 'yahoo'
+            ? 'Source: Yahoo Finance ↗'
             : 'Source: Federal Reserve Bank of St. Louis (FRED) ↗'}
         </a>
         <span style={S.chartFooterText}>{s.freq} frequency</span>
