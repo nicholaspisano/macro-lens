@@ -50,7 +50,7 @@ function SkeletonCard({ s }) {
 }
 
 // ─── Metric card ──────────────────────────────────────────────────────────────
-function MetricCard({ s, data, meta, active, onClick }) {
+function MetricCard({ s, data, meta, active, onClick, isDueSoon }) {
   const [hovered, setHovered] = useState(false);
   const [tipVisible, setTipVisible] = useState(false);
 
@@ -99,6 +99,15 @@ function MetricCard({ s, data, meta, active, onClick }) {
               color: active ? '#6ee9a8' : '#2a7d4f',
               padding: '1px 5px', borderRadius: 3,
             }}>New</span>
+          )}
+          {isDueSoon && !isRecent && (
+            <span title="Update expected within 24 hours" style={{
+              fontSize: 9, fontFamily: 'var(--mono)', fontWeight: 700,
+              letterSpacing: '0.05em', textTransform: 'uppercase',
+              background: active ? 'rgba(255,200,80,0.2)' : '#fffbee',
+              color: active ? '#ffd060' : '#b07d00',
+              padding: '1px 5px', borderRadius: 3,
+            }}>Soon</span>
           )}
         </div>
         {s.description && (
@@ -341,7 +350,7 @@ function CardSection({ group, series, seriesData, seriesMeta }) {
               return (
                 <div key={rowNum} style={{ display: 'grid', gridTemplateColumns: `repeat(${rowSeries.length}, 1fr)`, gap: 1, background: 'var(--border)' }}>
                   {rowSeries.map(s => (
-                    <MetricCard key={s.id} s={s} data={seriesData[s.id]} meta={seriesMeta[s.id]} active={activeId === s.id} onClick={() => handleSelect(s.id)} />
+                    <MetricCard key={s.id} s={s} data={seriesData[s.id]} meta={seriesMeta[s.id]} active={activeId === s.id} onClick={() => handleSelect(s.id)} isDueSoon={s.releaseId ? dueSoon.has(s.releaseId) : false} />
                   ))}
                 </div>
               );
@@ -370,6 +379,7 @@ function CardSection({ group, series, seriesData, seriesMeta }) {
 export default function Dashboard() {
   const [seriesData, setSeriesData]   = useState({});
   const [seriesMeta, setSeriesMeta]   = useState({});
+  const [dueSoon, setDueSoon]         = useState(new Set());
   const [loading, setLoading]         = useState(false);
   const [error, setError]             = useState(null);
   const [lastRefresh, setLastRefresh] = useState(null);
@@ -379,6 +389,11 @@ export default function Dashboard() {
     setLoading(true);
     setError(null);
     try {
+      // Fetch release calendar in parallel with series data
+      fetch('/api/releases')
+        .then(r => r.ok ? r.json() : null)
+        .then(d => { if (d?.dueSoon) setDueSoon(new Set(d.dueSoon)); })
+        .catch(() => {});
       // Stagger requests in batches of 4 to avoid FRED rate limiting (429)
       const BATCH_SIZE = 6;
       const BATCH_DELAY = 300; // ms between batches
