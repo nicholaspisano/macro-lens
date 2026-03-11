@@ -302,7 +302,7 @@ function SectionChart({ s, data, meta, range, onRangeChange }) {
 }
 
 // ─── Card section with its own chart ─────────────────────────────────────────
-function CardSection({ group, series, seriesData, seriesMeta }) {
+function CardSection({ group, series, seriesData, seriesMeta, dueSoon = new Set() }) {
   const [activeId, setActiveId] = useState(null);
   const [range, setRange]       = useState('5Y');
   const chartRef                = useRef(null);
@@ -339,7 +339,7 @@ function CardSection({ group, series, seriesData, seriesMeta }) {
           return (
             <div style={{ ...S.cardsGrid, gridTemplateColumns: `repeat(${cols}, 1fr)`, borderRadius: activeId ? '6px 6px 0 0' : 6 }}>
               {series.map(s => (
-                <MetricCard key={s.id} s={s} data={seriesData[s.id]} meta={seriesMeta[s.id]} active={activeId === s.id} onClick={() => handleSelect(s.id)} />
+                <MetricCard key={s.id} s={s} data={seriesData[s.id]} meta={seriesMeta[s.id]} active={activeId === s.id} onClick={() => handleSelect(s.id)} isDueSoon={s.releaseId ? dueSoon.has(s.releaseId) : false} />
               ))}
             </div>
           );
@@ -491,6 +491,7 @@ export default function Dashboard() {
               series={groupSeries}
               seriesData={seriesData}
               seriesMeta={seriesMeta}
+              dueSoon={dueSoon}
             />
           );
         })}
