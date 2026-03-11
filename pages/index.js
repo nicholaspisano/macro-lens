@@ -63,15 +63,17 @@ function MetricCard({ s, data, meta, active, onClick, isDueSoon }) {
   const isPos = cls === 'pos', isNeg = cls === 'neg';
   const released = fmtReleaseDate(s.source === 'zillow' ? meta?.latestObsDate : meta?.lastUpdated);
 
-  const isRecent = (() => {
-    const dateStr = meta?.lastUpdated || meta?.latestObsDate;
-    if (!dateStr) return false;
-    const updated = new Date(dateStr.replace(' ', 'T').replace(/([+-]\d{2})$/, '$1:00'));
-    if (isNaN(updated)) return false;
-    const hoursSince = (Date.now() - updated.getTime()) / (1000 * 60 * 60);
-    const threshold = (s.freq === 'Daily' || s.freq === 'Weekly') ? 24 : 72;
-    return hoursSince <= threshold;
-  })();
+  const isRecent = s.source === 'yahoo'
+    ? true
+    : (() => {
+        const dateStr = meta?.lastUpdated || meta?.latestObsDate;
+        if (!dateStr) return false;
+        const updated = new Date(dateStr.replace(' ', 'T').replace(/([+-]\d{2})$/, '$1:00'));
+        if (isNaN(updated)) return false;
+        const hoursSince = (Date.now() - updated.getTime()) / (1000 * 60 * 60);
+        const threshold = (s.freq === 'Daily' || s.freq === 'Weekly') ? 24 : 72;
+        return hoursSince <= threshold;
+      })();
 
   const cardStyle = active
     ? { ...S.card, background: '#0f1c26', borderBottom: `2px solid ${BLUE}`, cursor: 'pointer' }
