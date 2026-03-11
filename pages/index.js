@@ -391,6 +391,8 @@ export default function Dashboard() {
             let url;
             if (s.source === 'zillow') {
               url = `/api/zillow?metric=${s.id}`;
+            } else if (s.source === 'yahoo') {
+              url = `/api/yahoo?ticker=${encodeURIComponent(s.id)}`;
             } else {
               const params = new URLSearchParams({ seriesId: s.id, yoyCalc: s.yoyCalc ? 'true' : 'false' });
               url = `/api/fred?${params}`;
