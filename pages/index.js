@@ -241,7 +241,7 @@ function SectionChart({ s, data, meta, range, onRangeChange }) {
     }
   };
 
-  const ranges = ['3M', '1Y', '5Y', '10Y', 'MAX'];
+  const ranges = s.group === 'news' ? ['1M', '3M', '1Y', '5Y', 'MAX'] : ['3M', '1Y', '5Y', '10Y', 'MAX'];
 
   return (
     <div style={S.chartPanel}>
@@ -316,6 +316,8 @@ function CardSection({ group, series, seriesData, seriesMeta, dueSoon = new Set(
       setActiveId(null); // toggle off
     } else {
       setActiveId(id);
+      const s = series.find(s => s.id === id);
+      setRange(s?.group === 'news' ? '1M' : '5Y');
       // Scroll chart into view smoothly after render
       setTimeout(() => chartRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
     }
