@@ -416,13 +416,18 @@ export default function Dashboard() {
               const params = new URLSearchParams({ seriesId: s.id, yoyCalc: s.yoyCalc ? 'true' : 'false' });
               url = `/api/fred?${params}`;
             }
-            const res = await fetch(url);
-            if (!res.ok) { const e = await res.json(); throw new Error(e.error || `HTTP ${res.status}`); }
-            const { observations, lastUpdated, latestObsDate } = await res.json();
-            return [s.id, { observations, lastUpdated, latestObsDate }];
+            try {
+              const res = await fetch(url);
+              if (!res.ok) { const e = await res.json(); throw new Error(e.error || `HTTP ${res.status}`); }
+              const { observations, lastUpdated, latestObsDate } = await res.json();
+              return [s.id, { observations, lastUpdated, latestObsDate }];
+            } catch (e) {
+              console.warn(`[loadAll] failed to load ${s.id}:`, e.message);
+              return null; // failed series renders as skeleton
+            }
           })
         );
-        allResults.push(...batchResults);
+        allResults.push(...batchResults.filter(Boolean));
         if (i + BATCH_SIZE < SERIES.length) {
           await new Promise(r => setTimeout(r, BATCH_DELAY));
         }
