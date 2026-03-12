@@ -207,7 +207,19 @@ function SectionChart({ s, data, meta, range, onRangeChange }) {
         bodyFont: { family: "'IBM Plex Mono'", size: 12, weight: '500' },
         padding: 10, cornerRadius: 4, displayColors: false,
         callbacks: {
-          title: items => dateLabel(items[0].label),
+          title: items => {
+            const dateStr = items[0].label;
+            const d = new Date(dateStr + 'T00:00:00');
+            if (s.dateFormat === 'quarter') {
+              const q = Math.floor(d.getMonth() / 3) + 1;
+              return `Q${q} ${d.getFullYear()}`;
+            }
+            if (s.dateFormat === 'year') return d.getFullYear().toString();
+            if (s.freq === 'Daily' || s.freq === 'Weekly') {
+              return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            }
+            return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+          },
           label: item => formatValue(item.raw, s.format),
         }
       }
